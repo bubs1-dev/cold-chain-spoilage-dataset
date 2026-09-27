@@ -370,7 +370,6 @@ for i in range(N_SHIPMENTS):
         precooled_str = np.nan
     else:
         precooled_str = rng.choice(["Y", "yes", "TRUE", "1"] if precooled_true else ["N", "no", "FALSE", "0"])
-    doors_reported = len(door_times) if reports_doors else np.nan
     forecast_max = round(float(o_amb[0] + 5.0 + rng.normal(0, 1.8)), 1)
     qty = int(rng.integers(10, 800))
     rows.append(dict(
@@ -387,13 +386,12 @@ for i in range(N_SHIPMENTS):
         packaging_qualified_hours=qual_h,
         planned_transit_hours=planned,
         actual_transit_hours=actual,
-        customs_hold=bool(customs),
+        customs_hold="yes" if customs else "no",
         logger_model=logger,
         logger_interval_min=interval,
         logger_calibration_age_days=calib_age,
         precooled=precooled_str,
         origin_forecast_max_c=forecast_max,
-        door_open_events=doors_reported,
     ))
 
 ship = pd.DataFrame(rows)
@@ -409,7 +407,7 @@ for _ in range(60):
         lo_b = mid
 prob = 1 / (1 + np.exp(-(risk + lo_b)))
 spoiled = (rng.uniform(size=N_SHIPMENTS) < prob).astype(int)
-ship["spoiled"] = spoiled.astype(bool)
+ship["spoiled"] = np.where(spoiled == 1, "yes", "no")
 
 # Post-arrival field (target leakage): recorded by the receiving dock *after* QA.
 disp = np.where(
