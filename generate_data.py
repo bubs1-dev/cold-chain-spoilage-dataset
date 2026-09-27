@@ -59,7 +59,7 @@ CATEGORIES = {
     "fresh_berries":  ("chilled",         0.0,   4.0, True,  (180, 600),   0.9, (2, 15)),
     "dairy":          ("chilled",         1.0,   5.0, True,  (240, 720),   0.7, (1, 8)),
     "cut_flowers":    ("chilled",         1.0,   6.0, True,  (300, 900),   0.8, (1, 10)),
-    "oral_solid_crt": ("controlled_room", 15.0, 25.0, False, (1440, 4320), 0.4, (5, 120)),
+    "oral_solid_crt": ("controlled_room", 15.0, 25.0, False, (720, 1440),  0.4, (5, 120)),
 }
 
 products = []
@@ -394,7 +394,6 @@ for i in range(N_SHIPMENTS):
         precooled=precooled_str,
         origin_forecast_max_c=forecast_max,
         door_open_events=doors_reported,
-        declared_value_usd=round(qty * float(p.unit_value_usd), 2),
     ))
 
 ship = pd.DataFrame(rows)
@@ -424,7 +423,7 @@ readings = pd.concat(readings, ignore_index=True)
 readings["reading_ts"] = readings["reading_ts"].dt.strftime("%Y-%m-%d %H:%M:%S")
 
 OUT.mkdir(parents=True, exist_ok=True)
-products.to_csv(OUT / "products.csv", index=False)
+products.drop(columns=["unit_value_usd"]).to_csv(OUT / "products.csv", index=False)
 ship.to_csv(OUT / "shipments.csv", index=False)
 readings.to_csv(OUT / "sensor_readings.csv", index=False)
 print(f"shipments={len(ship)} spoiled_rate={spoiled.mean():.4f} readings={len(readings)}")
