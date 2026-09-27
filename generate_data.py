@@ -205,7 +205,7 @@ for i in range(N_SHIPMENTS):
     else:
         mode = rng.choice(["air", "courier_van"], p=[0.2, 0.8] if domestic else [0.9, 0.1])
 
-    qual_h = np.nan
+    qual_h = 0.0  # not applicable for active reefers
     if packaging in QUALIFIED_HOURS:
         a, b = QUALIFIED_HOURS[packaging]
         qual_h = float(rng.integers(a // 12, b // 12 + 1) * 12)
