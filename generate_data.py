@@ -387,7 +387,7 @@ for i in range(N_SHIPMENTS):
         packaging_qualified_hours=qual_h,
         planned_transit_hours=planned,
         actual_transit_hours=actual,
-        customs_hold=int(customs),
+        customs_hold=bool(customs),
         logger_model=logger,
         logger_interval_min=interval,
         logger_calibration_age_days=calib_age,
@@ -409,7 +409,7 @@ for _ in range(60):
         lo_b = mid
 prob = 1 / (1 + np.exp(-(risk + lo_b)))
 spoiled = (rng.uniform(size=N_SHIPMENTS) < prob).astype(int)
-ship["spoiled"] = spoiled
+ship["spoiled"] = spoiled.astype(bool)
 
 # Post-arrival field (target leakage): recorded by the receiving dock *after* QA.
 disp = np.where(
